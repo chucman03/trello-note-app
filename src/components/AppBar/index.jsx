@@ -1,3 +1,5 @@
+import { Box } from "@mui/material";
+
 function AppBar() {
   return (
     <Box

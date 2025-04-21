@@ -1,3 +1,5 @@
+import Box from "@mui/material/Box";
+
 function BoardContent() {
   return (
     <Box
