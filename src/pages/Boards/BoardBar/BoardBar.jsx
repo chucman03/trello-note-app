@@ -8,6 +8,7 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import Avatar from "@mui/material/Avatar";
 import AvatarGroup from "@mui/material/AvatarGroup";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
+import { capitalizeFirstLetter } from "~/utils/formatters";
 
 const MENU_STYLE = {
   color: "primary.main",
@@ -23,7 +24,7 @@ const MENU_STYLE = {
   },
 };
 
-function BoardBar() {
+function BoardBar(board) {
   return (
     <Box
       px={2}
@@ -45,7 +46,7 @@ function BoardBar() {
             MENU_STYLE,
           }}
           icon={<DashboardIcon />}
-          label="App fullstack"
+          label={board?.title}
           clickable
         />
         <Chip
@@ -53,7 +54,7 @@ function BoardBar() {
             MENU_STYLE,
           }}
           icon={<VpnLockICon />}
-          label="Public/Private workspace"
+          label={capitalizeFirstLetter(board?.type)}
           clickable
         />
         <Chip
@@ -61,7 +62,7 @@ function BoardBar() {
             MENU_STYLE,
           }}
           icon={<AddToDriveIcon />}
-          label="Add to Google drive"
+          label={board?.title}
           clickable
         />
         <Chip

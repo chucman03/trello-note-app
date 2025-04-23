@@ -17,7 +17,7 @@ import DragHandleICon from "@mui/icons-material/DragHandle";
 import { ContentCopy, ContentPaste } from "@mui/icons-material";
 import ListCard from "./ListCards/ListCard";
 
-function Column() {
+function Column({ column }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const handleClick = (event) => {
@@ -55,7 +55,7 @@ function Column() {
           variant="h6"
           sx={{ fontSize: "1rem", fontWeight: "bold", cursor: "pointer" }}
         >
-          Collumn Title
+          {column?.title}
         </Typography>
         <Box>
           <Tooltip title="more options">
@@ -118,7 +118,7 @@ function Column() {
         </Box>
       </Box>
       {/* box column list card */}
-      <ListCard />
+      <ListCard cards={column?.cards} />
 
       {/* box column footer */}
       <Box

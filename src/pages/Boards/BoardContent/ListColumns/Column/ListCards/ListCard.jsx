@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import React from "react";
 import Card from "./Card/Card";
 
-function ListCard() {
+function ListCard({ cards }) {
   return (
     <Box
       sx={{
@@ -32,8 +32,9 @@ function ListCard() {
           <Typography>Card 01</Typography>
         </CardContent>
       </Card> */}
-      <Card />
-      <Card temporaryHideMedia />
+      {cards?.map((card) => {
+        return <Card key={card._id} card={card} />;
+      })}
     </Box>
   );
 }
