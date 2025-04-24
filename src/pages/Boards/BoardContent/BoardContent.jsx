@@ -13,6 +13,7 @@ import {
   TouchSensor,
   DragOverlay,
   defaultDropAnimationSideEffects,
+  closestCorners,
 } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
 import { cloneDeep } from "lodash";
@@ -38,10 +39,12 @@ function BoardContent({ board }) {
   const [activeDragItemId, setActiveDragItemId] = useState(null);
   const [activeDragItemType, setActiveDragItemType] = useState(null);
   const [activeDragItemData, setActiveDragItemData] = useState(null);
+  const [oldColumnWhenDraggingCard, setOldColumnWhenDraggingCard] =
+    useState(null);
 
   const findColumnByCardId = (cardId) => {
     return orderedColumns.find((column) =>
-      column.cards.map((card) => card._id)?.include(cardId)
+      column.cards.map((card) => card._id)?.includes(cardId)
     );
   };
 
@@ -53,6 +56,9 @@ function BoardContent({ board }) {
         : ACTIVE_DRAG_ITEM_TYPE.COLUMN
     );
     setActiveDragItemData(event?.active?.data?.current);
+    if (event?.active?.data?.current?.columnId) {
+      setOldColumnWhenDraggingCard(findColumnByCardId(event?.active?.id));
+    }
   };
   const handleDragOver = (event) => {
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
@@ -121,21 +127,66 @@ function BoardContent({ board }) {
     }
   };
   const handleDragEnd = (event) => {
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE) {
-      return;
-    }
     const { active, over } = event;
-    if (!over) return;
-    if (active.id !== over.id) {
-      const oldIndex = orderedColumns.findIndex((c) => c._id === active.id);
-      const newIndex = orderedColumns.findIndex((c) => c._id === over.id);
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex);
-      const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
-      setOrderedColumns(dndOrderedColumns);
+    if (!active || !over) return;
+
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      const {
+        id: activeDraggingCardId,
+        data: { current: activeDraggingCardData },
+      } = active;
+      const { id: overCardId } = over;
+      const activeColumn = findColumnByCardId(activeDraggingCardId);
+      const overColumn = findColumnByCardId(overCardId);
+      if (!activeColumn || !overColumn) {
+        return;
+      }
+      if (oldColumnWhenDraggingCard._id !== overColumn._id) {
+      } else {
+        const oldCardIndex = oldColumnWhenDraggingCard?.cards.findIndex(
+          (c) => c._id === activeDragItemId
+        );
+        const newCardIndex = overColumn?.cards.findIndex(
+          (c) => c._id === overCardId
+        );
+        const dndOrderedCards = arrayMove(
+          oldColumnWhenDraggingCard?.cards,
+          oldCardIndex,
+          newCardIndex
+        );
+        setOrderedColumns((prevColumns) => {
+          const nextColumns = cloneDeep(prevColumns);
+          const targetColumn = nextColumns.find(
+            (column) => column._id === overColumn._id
+          );
+          targetColumn.cards = dndOrderedCards;
+          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
+          return nextColumns;
+        });
+      }
     }
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        const oldColumnIndex = orderedColumns.findIndex(
+          (c) => c._id === active.id
+        );
+        const newColumnIndex = orderedColumns.findIndex(
+          (c) => c._id === over.id
+        );
+        const dndOrderedColumns = arrayMove(
+          orderedColumns,
+          oldColumnIndex,
+          newColumnIndex
+        );
+        // const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+        setOrderedColumns(dndOrderedColumns);
+      }
+    }
+
     setActiveDragItemType(null);
     setActiveDragItemData(null);
     setActiveDragItemId(null);
+    setOldColumnWhenDraggingCard(null);
   };
 
   useEffect(() => {
@@ -156,6 +207,7 @@ function BoardContent({ board }) {
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
+      collisionDetection={closestCorners}
       sensors={sensors}
     >
       <Box
