@@ -1,7 +1,6 @@
-import Box from "@mui/material/Box";
 import React from "react";
+import { useState } from "react";
 import Tooltip from "@mui/material/Tooltip";
-import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 import Divider from "@mui/material/Divider";
@@ -16,11 +15,19 @@ import AddCardItem from "@mui/icons-material/AddCard";
 import DragHandleICon from "@mui/icons-material/DragHandle";
 import { ContentCopy, ContentPaste } from "@mui/icons-material";
 import ListCard from "./ListCards/ListCard";
-import { mapOrder } from "~/utils/sorts";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import CloseIcon from "@mui/icons-material/Close";
+import { toast } from "react-toastify";
+import { useConfirm } from "material-ui-confirm";
 
-function Column({ column }) {
+import {
+  Box,
+  Button,
+  TextField,
+} from "@mui/material";
+
+function Column({ column,deleteColumnDetails, createNewCard }) {
   const {
     attributes,
     listeners,
@@ -41,13 +48,43 @@ function Column({ column }) {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
 
-  const orderedCards = mapOrder(column?.cards, column?.cardOrderIds, "_id");
+  const orderedCards = column.cards
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
     setAnchorEl(null);
   };
+   const [openNewCardForm, setOpenNewCardForm] = useState(false)
+    const toggleOpenNewCardForm = () => setOpenNewCardForm(!openNewCardForm)
+    const [newCardTitle, setNewCardTitle] = useState("")
+    const addNewCard =  () => {
+      if(!newCardTitle){
+        toast.error('please enter title of card',{position: "top-right"})
+        return
+      }
+      const newCardData = {
+        title: newCardTitle,
+        columnId: column._id
+      }
+      //gọi api
+      createNewCard(newCardData)
+      // đóng trạng thái mở và clear input
+      toggleOpenNewCardForm(),
+      setNewCardTitle("")
+    }
+
+    const confirmDeleteColumn = useConfirm()
+    const handleDeleteColumn = () => {
+      confirmDeleteColumn({
+        title: 'delete column?',
+        description: 'this wil delete permantly your column. Are you sure?',
+        // content
+        confirmationText: 'Confirm',
+        cancellationText: 'Cancel',
+      }).then(() =>
+        {deleteColumnDetails(column._id)}).catch(() => {})
+    }
   return (
     <div ref={setNodeRef} style={dndKitColumnStyles} {...attributes}>
       <Box
@@ -85,25 +122,33 @@ function Column({ column }) {
             <Tooltip title="more options">
               <ExpandMoreIcon
                 sx={{ color: "text.primary", cursor: "pointer" }}
-                id="basic-collumn-dropdown"
-                aria-controls={open ? "basic-menu-collumn" : undefined}
+                id="basic-column-dropdown"
+                aria-controls={open ? "basic-menu-column" : undefined}
                 aria-haspopup="true"
                 aria-expanded={open ? "true" : undefined}
                 onClick={handleClick}
               />
             </Tooltip>
             <Menu
-              id="basic-menu-collumn"
+              id="basic-menu-column"
               anchorEl={anchorEl}
               open={open}
               onClose={handleClose}
+              onClick={handleClose}
               MenuListProps={{
-                "aria-labelledby": "basic-collumn-dropdown",
+                "aria-labelledby": "basic-column-dropdown",
               }}
             >
-              <MenuItem>
+              <MenuItem
+              onClick={toggleOpenNewCardForm}
+               sx={{
+                '&:hover': {
+                  color: 'success.light',
+                  '& .add-card-icon': {color: 'success.light'}
+                }
+              }}>
                 <ListItemIcon>
-                  <AddCardItem fontSize="small" />
+                  <AddCardItem className="add-card-icon" fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Add New Card</ListItemText>
               </MenuItem>
@@ -126,9 +171,16 @@ function Column({ column }) {
                 <ListItemText>Paste</ListItemText>
               </MenuItem>
               <Divider />
-              <MenuItem>
+              <MenuItem 
+              onClick={handleDeleteColumn}
+              sx={{
+                '&:hover': {
+                  color: 'warning.dark',
+                  '& .delete-forever-icon': {color: 'warning.dark'}
+                }
+              }}>
                 <ListItemIcon>
-                  <DeleteForeverIcon fontSize="small" />
+                  <DeleteForeverIcon className="delete-forever-icon" fontSize="small" />
                 </ListItemIcon>
                 <ListItemText>Remove this column</ListItemText>
               </MenuItem>
@@ -149,15 +201,58 @@ function Column({ column }) {
           sx={{
             height: (theme) => theme.trelloCustom.columnFooterHeight,
             p: 2,
+         
+          }}
+        >
+          {!openNewCardForm
+          ? <Box sx={{
+            height: '100%',
             display: "flex",
             alignItems: "center",
             justifyContent: "space-between",
-          }}
-        >
-          <Button endIcon={<AddCardItem />}>Add New Card</Button>
+          }}>
+          <Button endIcon={<AddCardItem />} onClick={toggleOpenNewCardForm}>Add New Card</Button>
           <Tooltip title="Drag to move">
-            <DragHandleICon sx={{ cursor: "pointer" }} />
+          <DragHandleICon sx={{ cursor: "pointer" }} />
           </Tooltip>
+        </Box>
+          :<Box sx={{
+            height: '100%',
+            display: "flex",
+            alignItems: "center",
+            gap: 1
+          }}>
+            <TextField
+                label="enter card title"
+                type="text"
+                size="small"
+                variant="outlined"
+                autoFocus
+                data-no-dnd="true"
+                value={newCardTitle}
+                onChange={(e) => setNewCardTitle(e.target.value)}
+                sx={{ minWidth: "120px" }}
+            />
+            <Box sx={{display: 'flex', alignItems: 'center', gap: 1}}>
+              <Button 
+              onClick={addNewCard}
+              variant="contained" color="success" size="small" 
+              sx={{
+                boxShadow: 'none',
+                border: '0.5px solid',
+                borderColor: (theme) => theme.palette.success.main,
+                '&:hover':{bgcolor: (theme) => theme.palette.success.light}
+              }}>Add</Button>
+              <CloseIcon fontSize="small" sx={{
+                color: 'white', 
+                cursor: 'pointer',
+                '&:hover':{bgcolor: (theme) => theme.palette.warning.light}
+              }}
+              onClick={toggleOpenNewCardForm}
+              />
+            </Box>
+            </Box>
+          }
         </Box>
       </Box>
     </div>

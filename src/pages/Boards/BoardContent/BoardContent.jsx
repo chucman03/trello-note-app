@@ -9,8 +9,8 @@ import {
   PointerSensor,
   useSensor,
   useSensors,
-  MouseSensor,
-  TouchSensor,
+  // MouseSensor,
+  // TouchSensor,
   DragOverlay,
   defaultDropAnimationSideEffects,
   closestCorners,
@@ -19,6 +19,7 @@ import {
   getFirstCollision,
   closestCenter,
 } from "@dnd-kit/core";
+import { MouseSensor, TouchSensor } from "~/customLibrary/DndKitSensors";
 import { arrayMove } from "@dnd-kit/sortable";
 import { cloneDeep, isEmpty } from "lodash";
 import { useCallback } from "react";
@@ -29,7 +30,7 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_CARD",
 };
 
-function BoardContent({ board }) {
+function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCard, moveColumns,moveCardInTheSameColumn, moveCardToDifferentColumn }) {
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 },
   // });
@@ -62,7 +63,8 @@ function BoardContent({ board }) {
     over,
     activeColumn,
     activeDraggingCardId,
-    activeDraggingCardData
+    activeDraggingCardData,
+    triggerFrom
   ) => {
     setOrderedColumns((prevColumns) => {
       const overCardIndex = overColumn?.cards?.findIndex(
@@ -117,6 +119,9 @@ function BoardContent({ board }) {
           (card) => card._id
         );
       }
+      if (triggerFrom === 'handleDragEnd') { 
+        moveCardToDifferentColumn(activeDraggingCardId, oldColumnWhenDraggingCard._id, nextOverColumn._id, nextColumns)
+      }
       return nextColumns;
     });
   };
@@ -159,7 +164,8 @@ function BoardContent({ board }) {
         over,
         activeColumn,
         activeDraggingCardId,
-        activeDraggingCardData
+        activeDraggingCardData,
+        'handleDragOver'
       );
     }
   };
@@ -178,6 +184,7 @@ function BoardContent({ board }) {
       if (!activeColumn || !overColumn) {
         return;
       }
+      // kéo thả card 2 column khác nhau
       if (oldColumnWhenDraggingCard._id !== overColumn._id) {
         moveCardBetweenDifferentColumns(
           overColumn,
@@ -186,7 +193,9 @@ function BoardContent({ board }) {
           over,
           activeColumn,
           activeDraggingCardId,
-          activeDraggingCardData
+          activeDraggingCardData,
+          'handleDragEnd'
+          
         );
       } else {
         const oldCardIndex = oldColumnWhenDraggingCard?.cards.findIndex(
@@ -200,15 +209,17 @@ function BoardContent({ board }) {
           oldCardIndex,
           newCardIndex
         );
+        const dndOrderedCardIds = dndOrderedCards.map((card) => card._id);
         setOrderedColumns((prevColumns) => {
           const nextColumns = cloneDeep(prevColumns);
           const targetColumn = nextColumns.find(
             (column) => column._id === overColumn._id
           );
           targetColumn.cards = dndOrderedCards;
-          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
+          targetColumn.cardOrderIds = dndOrderedCardIds
           return nextColumns;
-        });
+        })
+        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
       }
     }
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
@@ -225,6 +236,7 @@ function BoardContent({ board }) {
           newColumnIndex
         );
         // const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
+        moveColumns(dndOrderedColumns)
         setOrderedColumns(dndOrderedColumns);
       }
     }
@@ -236,7 +248,7 @@ function BoardContent({ board }) {
   };
 
   useEffect(() => {
-    setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, "_id"));
+    setOrderedColumns(board.columns);
   }, [board]);
 
   const dropAnimation = {
@@ -304,7 +316,7 @@ function BoardContent({ board }) {
           p: "10px 0",
         }}
       >
-        <ListColumns columns={orderedColumns} />
+        <ListColumns deleteColumnDetails={deleteColumnDetails} columns={orderedColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} />
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (

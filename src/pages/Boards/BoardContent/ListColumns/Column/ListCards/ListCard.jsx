@@ -16,7 +16,7 @@ function ListCard({ cards }) {
         sx={{
           display: "flex",
           flexDirection: "column",
-          p: "0 5px",
+          p: "0 5px 5px 5px",
           m: "0 5px",
           gap: 1,
           overflowX: "hidden",

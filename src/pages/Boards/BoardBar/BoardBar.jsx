@@ -24,7 +24,7 @@ const MENU_STYLE = {
   },
 };
 
-function BoardBar(board) {
+function BoardBar({board}) {
   return (
     <Box
       px={2}
@@ -41,6 +41,7 @@ function BoardBar(board) {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+        <Tooltip title={board?.description}>
         <Chip
           sx={{
             MENU_STYLE,
@@ -49,6 +50,7 @@ function BoardBar(board) {
           label={board?.title}
           clickable
         />
+        </Tooltip>
         <Chip
           sx={{
             MENU_STYLE,
@@ -57,6 +59,7 @@ function BoardBar(board) {
           label={capitalizeFirstLetter(board?.type)}
           clickable
         />
+        
         <Chip
           sx={{
             MENU_STYLE,

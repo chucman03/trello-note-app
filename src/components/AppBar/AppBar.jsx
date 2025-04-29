@@ -18,8 +18,10 @@ import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Profiles from "./Menus/Profiles";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
+import { useState } from "react";
 
 function AppBar() {
+  const [searchValue, setSearchValue] = useState("")
   return (
     <Box
       px={2}
@@ -78,6 +80,8 @@ function AppBar() {
           label="Search"
           type="search"
           size="small"
+          value={searchValue}
+          onChange={(e) =>setSearchValue(e.target.value)}
           sx={{ minWidth: "120px" }}
         />
         <Tooltip title="Notification">
