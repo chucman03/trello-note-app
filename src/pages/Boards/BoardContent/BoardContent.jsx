@@ -30,7 +30,12 @@ const ACTIVE_DRAG_ITEM_TYPE = {
   CARD: "ACTIVE_DRAG_ITEM_CARD",
 };
 
-function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCard, moveColumns,moveCardInTheSameColumn, moveCardToDifferentColumn }) {
+function BoardContent({
+  board,
+  moveColumns,
+  moveCardInTheSameColumn,
+  moveCardToDifferentColumn,
+}) {
   // const pointerSensor = useSensor(PointerSensor, {
   //   activationConstraint: { distance: 10 },
   // });
@@ -119,8 +124,13 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
           (card) => card._id
         );
       }
-      if (triggerFrom === 'handleDragEnd') { 
-        moveCardToDifferentColumn(activeDraggingCardId, oldColumnWhenDraggingCard._id, nextOverColumn._id, nextColumns)
+      if (triggerFrom === "handleDragEnd") {
+        moveCardToDifferentColumn(
+          activeDraggingCardId,
+          oldColumnWhenDraggingCard._id,
+          nextOverColumn._id,
+          nextColumns
+        );
       }
       return nextColumns;
     });
@@ -165,7 +175,7 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
         activeColumn,
         activeDraggingCardId,
         activeDraggingCardData,
-        'handleDragOver'
+        "handleDragOver"
       );
     }
   };
@@ -194,8 +204,7 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
           activeColumn,
           activeDraggingCardId,
           activeDraggingCardData,
-          'handleDragEnd'
-          
+          "handleDragEnd"
         );
       } else {
         const oldCardIndex = oldColumnWhenDraggingCard?.cards.findIndex(
@@ -216,10 +225,14 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
             (column) => column._id === overColumn._id
           );
           targetColumn.cards = dndOrderedCards;
-          targetColumn.cardOrderIds = dndOrderedCardIds
+          targetColumn.cardOrderIds = dndOrderedCardIds;
           return nextColumns;
-        })
-        moveCardInTheSameColumn(dndOrderedCards, dndOrderedCardIds, oldColumnWhenDraggingCard._id)
+        });
+        moveCardInTheSameColumn(
+          dndOrderedCards,
+          dndOrderedCardIds,
+          oldColumnWhenDraggingCard._id
+        );
       }
     }
     if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
@@ -236,7 +249,7 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
           newColumnIndex
         );
         // const dndOrderedColumnsIds = dndOrderedColumns.map((c) => c._id);
-        moveColumns(dndOrderedColumns)
+        moveColumns(dndOrderedColumns);
         setOrderedColumns(dndOrderedColumns);
       }
     }
@@ -316,7 +329,7 @@ function BoardContent({ board, deleteColumnDetails,createNewColumn, createNewCar
           p: "10px 0",
         }}
       >
-        <ListColumns deleteColumnDetails={deleteColumnDetails} columns={orderedColumns} createNewColumn={createNewColumn} createNewCard={createNewCard} />
+        <ListColumns columns={orderedColumns} />
         <DragOverlay dropAnimation={dropAnimation}>
           {!activeDragItemType && null}
           {activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN && (
