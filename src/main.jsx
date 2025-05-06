@@ -13,16 +13,25 @@ import { store } from "./redux/store";
 // browser router
 import { BrowserRouter } from "react-router-dom";
 
+import { PersistGate } from "redux-persist/integration/react";
+import {persistStore} from "redux-persist";
+const persistor = persistStore(store)
+
+import { injectStore } from "./utils/authorizeAxios";
+
+injectStore(store)
 createRoot(document.getElementById("root")).render(
   <BrowserRouter basename="/">
     <Provider store={store}>
-      <CssVarsProvider theme={theme}>
+      <PersistGate persistor={persistor}>
+        <CssVarsProvider theme={theme}>
         <ConfirmProvider>
           <CssBaseline />
           <App />
           <ToastContainer position="top-center" theme="colored" />
         </ConfirmProvider>
-      </CssVarsProvider>
+        </CssVarsProvider>
+      </PersistGate>
     </Provider>
   </BrowserRouter>
 );

@@ -1,4 +1,4 @@
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Avatar from "@mui/material/Avatar";
@@ -19,8 +19,13 @@ import {
   EMAIL_RULE_MESSAGE,
 } from "~/utils/validators";
 import FieldErrorAlert from "~/components/Form/FieldErrorAlert";
+import { useDispatch } from "react-redux";
+import { loginUserApi } from "~/redux/user/userSlice";
+import { toast } from "react-toastify";
 
 function LoginForm() {
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
   const {
     register,
     handleSubmit,
@@ -29,7 +34,14 @@ function LoginForm() {
   let [searchParams] = useSearchParams()
   const registeredEmail = searchParams.get('registeredEmail')
   const verifiedEmail = searchParams.get('verifiedEmail')
-  const submitLogIn = (data) => {};
+  const submitLogIn = (data) => {
+      const {email, password} = data
+      toast.promise(dispatch(loginUserApi({email, password})),
+      {pending: 'logging... '}).then(res => {
+        // kiem tra neu khong co loi moi redirect ve route
+        if (!res.error) navigate('/')
+      })
+  };
   return (
     <form onSubmit={handleSubmit(submitLogIn)}>
       <Zoom in={true} style={{ transitionDelay: "200ms" }}>
