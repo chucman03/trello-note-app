@@ -1,15 +1,15 @@
-import axios from "axios";
+import authorizeAxiosInstance from "~/utils/authorizeAxios";
 import { API_ROOT } from "~/utils/constants";
 
 // board
 // di chuyển đến redux
 // export const fetchBoardDetailsApi = async (boardId) => {
-//     const response = await axios.get(`${API_ROOT}/v1/boards/${boardId}`)
+//     const response = await authorizeAxiosInstance.get(`${API_ROOT}/v1/boards/${boardId}`)
 //     return response.data
 // }
 //
 export const updateBoardDetailsApi = async (boardId, updateData) => {
-  const response = await axios.put(
+  const response = await authorizeAxiosInstance.put(
     `${API_ROOT}/v1/boards/${boardId}`,
     updateData
   );
@@ -17,7 +17,7 @@ export const updateBoardDetailsApi = async (boardId, updateData) => {
 };
 
 export const moveCardToDifferentColumnApi = async (updateData) => {
-  const response = await axios.put(
+  const response = await authorizeAxiosInstance.put(
     `${API_ROOT}/v1/boards/supports/moving_card`,
     updateData
   );
@@ -26,23 +26,31 @@ export const moveCardToDifferentColumnApi = async (updateData) => {
 
 // column
 export const createNewColumnApi = async (newColumnData) => {
-  const response = await axios.post(`${API_ROOT}/v1/columns`, newColumnData);
+  const response = await authorizeAxiosInstance.post(
+    `${API_ROOT}/v1/columns`,
+    newColumnData
+  );
   return response.data;
 };
 export const updateColumnDetailsApi = async (columnId, updateData) => {
-  const response = await axios.put(
+  const response = await authorizeAxiosInstance.put(
     `${API_ROOT}/v1/columns/${columnId}`,
     updateData
   );
   return response.data;
 };
 export const deleteColumnDetailsApi = async (columnId) => {
-  const response = await axios.delete(`${API_ROOT}/v1/columns/${columnId}`);
+  const response = await authorizeAxiosInstance.delete(
+    `${API_ROOT}/v1/columns/${columnId}`
+  );
   return response.data;
 };
 
 // card
 export const createNewCardApi = async (newCardData) => {
-  const response = await axios.post(`${API_ROOT}/v1/cards`, newCardData);
+  const response = await authorizeAxiosInstance.post(
+    `${API_ROOT}/v1/cards`,
+    newCardData
+  );
   return response.data;
 };
