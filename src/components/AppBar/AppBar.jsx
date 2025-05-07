@@ -19,6 +19,7 @@ import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Profiles from "./Menus/Profiles";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 function AppBar() {
   const [searchValue, setSearchValue] = useState("")
@@ -37,25 +38,31 @@ function AppBar() {
       }}
     >
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <AppsIcon sx={{ color: "primary.main" }} />
-        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-          <SvgIcon
-            component={TrelloIcon}
-            inheritViewBox
-            sx={{ color: "primary.main" }}
-            fontSize="small"
-          />
-          <Typography
-            variant="span"
-            sx={{
-              fontSize: "1.2rem",
-              fontWeight: "bold",
-              color: "primary.main",
-            }}
-          >
-            Trello
-          </Typography>
-        </Box>
+      <Link to="/boards">
+      <Tooltip title="Board list">
+        <AppsIcon sx={{ color: "primary.main", verticalAlign: "middle" }} />
+      </Tooltip>
+      </Link>
+        <Link to="/">
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            <SvgIcon
+              component={TrelloIcon}
+              inheritViewBox
+              sx={{ color: "primary.main" }}
+              fontSize="small"
+            />
+            <Typography
+              variant="span"
+              sx={{
+                fontSize: "1.2rem",
+                fontWeight: "bold",
+                color: "primary.main",
+              }}
+            >
+              Trello
+            </Typography>
+          </Box>
+        </Link>
         <Box sx={{ display: { xs: "none", md: "flex" }, gap: 1 }}>
           <WorkSpace />
           <Recent />

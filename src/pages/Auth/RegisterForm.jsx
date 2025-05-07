@@ -31,9 +31,10 @@ function RegisterForm() {
   const navigate = useNavigate()
   const submitRegister = (data) => {
     const {email, password} = data
-    toast.promise(registerUserApi({email, password}),{pending: 'registraion is in progress'}.then(user =>{
+    toast.promise(registerUserApi({email, password}),
+    {pending: 'registraion is in progress'}).then(user => {
       navigate(`/login?registeredEmail=${user.email}`)
-    }))
+    })
   };
   return (
     <form onSubmit={handleSubmit(submitRegister)}>
