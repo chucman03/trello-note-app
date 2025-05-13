@@ -36,12 +36,10 @@ function LoginForm() {
   const verifiedEmail = searchParams.get('verifiedEmail')
   const submitLogIn = (data) => {
       const {email, password} = data
-      console.log('ccc', data)
       toast.promise(
         dispatch(loginUserApi({email, password})),
       {pending: 'logging... '})
       .then(res => {
-        console.log(res)
         // kiem tra neu khong co loi moi redirect ve route
         if (!res.error) navigate('/')
       })

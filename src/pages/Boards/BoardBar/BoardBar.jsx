@@ -5,10 +5,10 @@ import VpnLockICon from "@mui/icons-material/VpnLock";
 import AddToDriveIcon from "@mui/icons-material/AddToDrive";
 import BoltIcon from "@mui/icons-material/Bolt";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import Avatar from "@mui/material/Avatar";
-import AvatarGroup from "@mui/material/AvatarGroup";
 import PersonAddIcon from "@mui/icons-material/PersonAdd";
 import { capitalizeFirstLetter } from "~/utils/formatters";
+import BoardUserGroup from "./BoardUserGroup";
+import InviteBoardUser from "./InviteBoardUser";
 
 const MENU_STYLE = {
   color: "primary.main",
@@ -86,23 +86,9 @@ function BoardBar({board}) {
         />
       </Box>
       <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-        <Button variant="outlined" startIcon={<PersonAddIcon />}>
-          Invite
-        </Button>
-        <AvatarGroup
-          max={4}
-          sx={{
-            "& .MuiAvatar-root": {
-              width: 34,
-              height: 34,
-              fontSize: 16,
-            },
-          }}
-        >
-          <Tooltip title="avatar">
-            <Avatar alt="avatar" src="/static/images/avatar/1.jpg" />
-          </Tooltip>
-        </AvatarGroup>
+        <InviteBoardUser boardId={board._id}/>
+        {/* xử lý hiển thị danh sách thành viên */}
+       <BoardUserGroup boardUsers={board?.FE_allUsers}/>
       </Box>
     </Box>
   );
