@@ -20,11 +20,14 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import PageLoadingSpinner from "~/components/Loading/PageLoadingSpinner";
+import ActiveCard from "~/components/Modal/ActiveCard/ActiveCard";
+import { selectCurrentActiveCard } from "~/redux/activeCard/activeCardSlice";
 
 function Board() {
   const dispatch = useDispatch();
   // const [board, setBoard] = useState(null);
   const board = useSelector(selectCurrentActiveBoard);
+  const activeCard = useSelector(selectCurrentActiveCard)
   const { boardId } = useParams();
   useEffect(() => {
     // const boardId = "680e4b7bf9fdf671fc6780ae";
@@ -116,6 +119,7 @@ function Board() {
       maxWidth={false}
       sx={{ height: "100vh", backgroundColor: "primary.main" }}
     >
+      <ActiveCard />
       <AppBar />
       <BoardBar board={board} />
       <BoardContent

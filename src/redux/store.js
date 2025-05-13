@@ -3,6 +3,7 @@ import { activeBoardReducer } from "./activeBoard/activeBoardSlice";
 import { userReducer } from "./user/userSlice";
 import storage from 'redux-persist/lib/storage'
 import { persistReducer } from "redux-persist";
+import { activeCardReducer } from "./activeCard/activeCardSlice";
 
 const rootPersistConfig ={
   key: 'root',
@@ -13,7 +14,8 @@ const rootPersistConfig ={
 // combine cac reducer trong du an
 const reducers = combineReducers({
   activeBoard: activeBoardReducer,
-  user: userReducer
+  user: userReducer,
+  activeCard: activeCardReducer
 })
 // thu hien persist reducer
 const persistedReducers = persistReducer(rootPersistConfig, reducers)

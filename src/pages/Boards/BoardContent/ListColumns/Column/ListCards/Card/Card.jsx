@@ -11,8 +11,11 @@ import Typography from "@mui/material/Typography";
 import { useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import theme from "~/theme";
+import { useDispatch } from "react-redux";
+import { showModalActiveCard, updateCurrentActiveCard } from "~/redux/activeCard/activeCardSlice";
 
 function Card({ card }) {
+  const dispatch = useDispatch()
   const {
     attributes,
     listeners,
@@ -36,8 +39,13 @@ function Card({ card }) {
       !!card?.attachments?.length
     );
   };
+  const setActiveCard = () => {
+    dispatch(updateCurrentActiveCard(card))
+    dispatch(showModalActiveCard())
+  }
   return (
     <MuiCard
+      onClick={setActiveCard}
       ref={setNodeRef}
       style={dndKitCardStyles}
       {...attributes}
