@@ -29,7 +29,6 @@ function App() {
         <Route path="/boards" element={<Boards />} />
         <Route path="/settings/account" element={<Settings />} />
         <Route path="/settings/security" element={<Settings />} />
-
       </Route>
       
       {/* authentication */}

@@ -21,18 +21,20 @@ import { injectStore } from "./utils/authorizeAxios";
 
 injectStore(store)
 createRoot(document.getElementById("root")).render(
-  <BrowserRouter basename="/">
+  
     <Provider store={store}>
       <PersistGate persistor={persistor}>
-        <CssVarsProvider theme={theme}>
-        <ConfirmProvider>
-          <GlobalStyles styles={{ a: {textDecoration: 'none'} }}/>
-          <CssBaseline />
-          <App />
-          <ToastContainer position="top-center" theme="colored" />
-        </ConfirmProvider>
-        </CssVarsProvider>
+        <BrowserRouter basename="/">
+          <CssVarsProvider theme={theme}>
+            <ConfirmProvider>
+              <GlobalStyles styles={{ a: {textDecoration: 'none'} }}/>
+              <CssBaseline />
+              <App />
+              <ToastContainer position="top-center" theme="colored" />
+            </ConfirmProvider>
+          </CssVarsProvider>
+        </BrowserRouter>
       </PersistGate>
     </Provider>
-  </BrowserRouter>
+  
 );
