@@ -1,9 +1,7 @@
 import {
   Box,
   Button,
-  TextField,
   Typography,
-  Badge,
   Tooltip,
 } from "@mui/material";
 import AppsIcon from "@mui/icons-material/Apps";
@@ -14,15 +12,14 @@ import WorkSpace from "./Menus/Workspaces";
 import Recent from "./Menus/Recent";
 import Starred from "./Menus/Starred";
 import Templates from "./Menus/Templates";
-import NotificationsNoneIcon from "@mui/icons-material/NotificationsNone";
 import HelpOutlineIcon from "@mui/icons-material/HelpOutline";
 import Profiles from "./Menus/Profiles";
 import LibraryAddIcon from "@mui/icons-material/LibraryAdd";
-import { useState } from "react";
 import { Link } from "react-router-dom";
+import Notifications from "./Notifications/Notifications";
+import AutoCompleteSearchBoard from "./SearchBoards/AutoCompleteSearchBoard";
 
 function AppBar() {
-  const [searchValue, setSearchValue] = useState("")
   return (
     <Box
       px={2}
@@ -82,20 +79,9 @@ function AppBar() {
           border: "primary.main",
         }}
       >
-        <TextField
-          id="outlined-search"
-          label="Search"
-          type="search"
-          size="small"
-          value={searchValue}
-          onChange={(e) =>setSearchValue(e.target.value)}
-          sx={{ minWidth: "120px" }}
-        />
-        <Tooltip title="Notification">
-          <Badge color="secondary" variant="dot" sx={{ cursor: "pointer" }}>
-            <NotificationsNoneIcon sx={{ color: "primary.main" }} />
-          </Badge>
-        </Tooltip>
+        <AutoCompleteSearchBoard/>
+        {/* hiển thị thông báo */}
+        <Notifications />
         <Tooltip title="Help">
           <HelpOutlineIcon sx={{ cursor: "pointer", color: "primary.main" }} />
         </Tooltip>
